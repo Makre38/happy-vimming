@@ -189,10 +189,10 @@
     mountInsertChoices: function () {
       return mount({
         choices: [
-          { label: "A", target: "*insert_A" },
           { label: "l で行末まで移動して a", target: "*insert_la" },
           { label: "i で入力を始める", target: "*insert_i" },
-          { label: "行末をクリックして a", target: "*insert_click" }
+          { label: "行末をクリックして a", target: "*insert_click" },
+          { label: "A", target: "*insert_A" }
         ]
       });
     }
