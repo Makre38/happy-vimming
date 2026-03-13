@@ -28,19 +28,20 @@
 .editor-block {
   margin: 10px 0 18px;
   padding: 14px 18px;
-  border: 1px solid #cfcfcf;
+  border: 1px solid #4b4b4b;
   border-radius: 8px;
-  background: #f7f7f7;
-  color: #111;
+  background: #111;
+  color: #f5f5f5;
   font-family: "Courier New", monospace;
   font-size: 26px;
   line-height: 1.6;
   white-space: pre-wrap;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
 }
 
 .editor-cursor {
   display: inline-block;
-  background: #ffe69a;
+  background: #f5f5f5;
   color: #111;
   border-radius: 4px;
   padding: 0 2px;
