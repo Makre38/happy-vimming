@@ -1,8 +1,10 @@
-# 走るか寝るかするメロス
+# Happy Vimming!
 
 ## 概要
 
-ティラノスクリプトのサンプルコード。
+ティラノスクリプトを使ったゲーム。
+
+Vimちゃんに認めてもらえるようがんばろう。
 
 * [テストプレイ](https://appi-github.github.io/tyrano_sample/)
 
