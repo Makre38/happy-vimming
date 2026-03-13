@@ -1,6 +1,6 @@
 (function (root) {
   var TOTAL_ROUNDS = 12;
-  var DURATIONS = [1200, 1200, 1200, 1200, 900, 900, 900, 900, 700, 700, 700, 700];
+  var DURATIONS = [1200, 1200, 1000, 1000, 900, 900, 800, 800, 700, 500, 450, 450];
   var ARROWS = [
     { symbol: "↑", key: "k", display: "k" },
     { symbol: "↓", key: "j", display: "j" },
