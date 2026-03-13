@@ -20,9 +20,9 @@
     state.activeIndex = 0;
   }
 
-  function markArrowUsage() {
-    if (root.TYRANO && TYRANO.kag && TYRANO.kag.variable && TYRANO.kag.variable.f) {
-      TYRANO.kag.variable.f.used_arrow = true;
+  function markForbiddenInput() {
+    if (root.TYRANO && TYRANO.kag && TYRANO.kag.stat && TYRANO.kag.stat.f) {
+      TYRANO.kag.stat.f.only_hjkl_return = false;
     }
   }
 
@@ -82,6 +82,7 @@
         renderActive();
       });
       button.addEventListener("click", function () {
+        markForbiddenInput();
         choose(choice);
       });
       host.appendChild(button);
@@ -94,7 +95,7 @@
       var key = event.key;
 
       if (key === "ArrowUp" || key === "ArrowLeft") {
-        markArrowUsage();
+        markForbiddenInput();
         move(-1);
         event.preventDefault();
         event.stopPropagation();
@@ -102,7 +103,7 @@
       }
 
       if (key === "ArrowDown" || key === "ArrowRight") {
-        markArrowUsage();
+        markForbiddenInput();
         move(1);
         event.preventDefault();
         event.stopPropagation();
@@ -129,7 +130,21 @@
           choose(choice);
           event.preventDefault();
           event.stopPropagation();
+          return;
         }
+      }
+
+      if (
+        key !== "h" &&
+        key !== "H" &&
+        key !== "j" &&
+        key !== "J" &&
+        key !== "k" &&
+        key !== "K" &&
+        key !== "l" &&
+        key !== "L"
+      ) {
+        markForbiddenInput();
       }
     };
 
