@@ -1,0 +1,72 @@
+[data-move-game-root="true"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1280px;
+  height: 720px;
+  z-index: 99999998;
+}
+
+.move-game {
+  position: absolute;
+  inset: 0;
+  color: #f5f5f5;
+  font-family: sans-serif;
+}
+
+.move-game__counter {
+  position: absolute;
+  top: 48px;
+  right: 64px;
+  font-size: 24px;
+  letter-spacing: 0.04em;
+}
+
+.move-game__arrow {
+  position: absolute;
+  top: 180px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 220px;
+  text-align: center;
+  font-size: 180px;
+  line-height: 1;
+}
+
+.move-game__input-box {
+  position: absolute;
+  top: 470px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 280px;
+  padding: 24px 18px;
+  border: 1px solid #4b4b4b;
+  border-radius: 10px;
+  background: #111;
+  color: #f5f5f5;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+  text-align: center;
+  font-family: "Courier New", monospace;
+  font-size: 44px;
+  line-height: 1;
+  box-sizing: border-box;
+}
+
+.move-game__input-box.is-hit {
+  background: #103a6d;
+  border-color: #5ea2ff;
+}
+
+.move-game__input-box.is-miss {
+  background: #5a1515;
+  border-color: #ff8b8b;
+}
+
+.move-game__hint {
+  position: absolute;
+  top: 580px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 22px;
+  opacity: 0.8;
+}
