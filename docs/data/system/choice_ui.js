@@ -3,13 +3,19 @@
     host: null,
     buttons: [],
     activeIndex: 0,
-    keyHandler: null
+    keyHandler: null,
+    resizeHandler: null
   };
 
   function cleanup() {
     if (state.keyHandler) {
       root.document.removeEventListener("keydown", state.keyHandler, true);
       state.keyHandler = null;
+    }
+
+    if (state.resizeHandler) {
+      root.removeEventListener("resize", state.resizeHandler);
+      state.resizeHandler = null;
     }
 
     if (state.host) {
@@ -34,6 +40,28 @@
         button.classList.remove("is-active");
       }
     });
+  }
+
+  function layoutHost() {
+    if (!state.host) {
+      return;
+    }
+
+    var width = Math.min(420, Math.max(280, root.innerWidth - 80));
+    state.host.style.width = width + "px";
+
+    var gap = 16;
+    var buttonHeight = 64;
+    var totalHeight = state.buttons.length * buttonHeight + Math.max(0, state.buttons.length - 1) * gap;
+    var left = Math.max(40, Math.round((1280 - width) / 2));
+    var top = Math.round(720 - totalHeight - 70);
+
+    if (top < 300) {
+      top = 300;
+    }
+
+    state.host.style.left = left + "px";
+    state.host.style.top = top + "px";
   }
 
   function move(delta) {
@@ -89,6 +117,7 @@
       return button;
     });
 
+    layoutHost();
     renderActive();
 
     state.keyHandler = function (event) {
@@ -149,6 +178,8 @@
     };
 
     root.document.addEventListener("keydown", state.keyHandler, true);
+    state.resizeHandler = layoutHost;
+    root.addEventListener("resize", state.resizeHandler);
     return true;
   }
 

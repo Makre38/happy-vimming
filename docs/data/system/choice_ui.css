@@ -1,8 +1,7 @@
 [data-choice-root="true"] {
   position: absolute;
-  left: 430px;
-  top: 420px;
   width: 420px;
+  max-width: calc(100vw - 80px);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -24,4 +23,25 @@
 .choice-ui__button.is-active {
   background: rgba(255, 230, 150, 0.95);
   outline: 2px solid #f0d060;
+}
+
+.editor-block {
+  margin: 10px 0 18px;
+  padding: 14px 18px;
+  border: 1px solid #cfcfcf;
+  border-radius: 8px;
+  background: #f7f7f7;
+  color: #111;
+  font-family: "Courier New", monospace;
+  font-size: 26px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.editor-cursor {
+  display: inline-block;
+  background: #ffe69a;
+  color: #111;
+  border-radius: 4px;
+  padding: 0 2px;
 }
