@@ -9,6 +9,39 @@
 
 <meta name="robots" content="noindex,nofollow" />
 
+<style>
+  #device-blocker {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: #111;
+    color: #f5f5f5;
+    font-family: sans-serif;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    box-sizing: border-box;
+  }
+
+  #device-blocker.is-visible {
+    display: flex;
+  }
+
+  #device-blocker p {
+    margin: 0;
+    font-size: 20px;
+    line-height: 1.6;
+  }
+
+  .keyboard-choice-active {
+    background: rgba(255, 230, 150, 0.35);
+    outline: 2px solid #f0d060;
+    border-radius: 6px;
+  }
+</style>
+
 <link href="./tyrano/tyrano.css" rel="stylesheet" type="text/css"/>
 
 <link href="./tyrano/libs/jquery-ui/jquery-ui.css" rel="stylesheet" type="text/css"/>
@@ -87,11 +120,178 @@ try{
 function doScroll() { if (window.pageYOffset === 0) { window.scrollTo(0,1); } }  
 window.onload = function() { setTimeout(doScroll, 100); }  
 
+function isUnsupportedMobile() {
+  var ua = navigator.userAgent || "";
+  return /Android.+Mobile|iPhone|iPod|Windows Phone|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+}
+
+var keyboardChoiceState = {
+  elements: [],
+  activeIndex: 0
+};
+
+function markArrowUsage() {
+  if (window.TYRANO && TYRANO.kag && TYRANO.kag.variable && TYRANO.kag.variable.f) {
+    TYRANO.kag.variable.f.used_arrow = true;
+  }
+}
+
+function getChoiceElements() {
+  var candidates = Array.prototype.slice.call(
+    document.querySelectorAll("#tyrano_base .message_inner span")
+  );
+
+  return candidates.filter(function (el) {
+    if (!el.textContent || !el.textContent.trim()) {
+      return false;
+    }
+
+    if (el.offsetParent === null) {
+      return false;
+    }
+
+    return window.getComputedStyle(el).cursor === "pointer";
+  });
+}
+
+function applyChoiceHighlight() {
+  keyboardChoiceState.elements.forEach(function (el, index) {
+    if (index === keyboardChoiceState.activeIndex) {
+      el.classList.add("keyboard-choice-active");
+    } else {
+      el.classList.remove("keyboard-choice-active");
+    }
+  });
+}
+
+function refreshKeyboardChoices() {
+  var elements = getChoiceElements();
+  var same =
+    elements.length === keyboardChoiceState.elements.length &&
+    elements.every(function (el, index) {
+      return el === keyboardChoiceState.elements[index];
+    });
+
+  if (!same) {
+    keyboardChoiceState.elements = elements;
+    keyboardChoiceState.activeIndex = 0;
+
+    keyboardChoiceState.elements.forEach(function (el, index) {
+      el.addEventListener("mouseenter", function () {
+        keyboardChoiceState.activeIndex = index;
+        applyChoiceHighlight();
+      });
+    });
+  }
+
+  if (keyboardChoiceState.activeIndex >= keyboardChoiceState.elements.length) {
+    keyboardChoiceState.activeIndex = 0;
+  }
+
+  applyChoiceHighlight();
+}
+
+function moveChoice(delta) {
+  if (!keyboardChoiceState.elements.length) {
+    return false;
+  }
+
+  var count = keyboardChoiceState.elements.length;
+  keyboardChoiceState.activeIndex =
+    (keyboardChoiceState.activeIndex + delta + count) % count;
+  applyChoiceHighlight();
+  return true;
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  if (!isUnsupportedMobile()) {
+    var observer = new MutationObserver(function () {
+      refreshKeyboardChoices();
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["style", "class"]
+    });
+
+    document.addEventListener(
+      "keydown",
+      function (event) {
+        refreshKeyboardChoices();
+
+        if (!keyboardChoiceState.elements.length) {
+          return;
+        }
+
+        var key = event.key;
+
+        if (key === "ArrowUp" || key === "ArrowLeft") {
+          markArrowUsage();
+          if (moveChoice(-1)) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          return;
+        }
+
+        if (key === "ArrowDown" || key === "ArrowRight") {
+          markArrowUsage();
+          if (moveChoice(1)) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          return;
+        }
+
+        if (key === "k" || key === "K" || key === "h" || key === "H") {
+          if (moveChoice(-1)) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          return;
+        }
+
+        if (key === "j" || key === "J" || key === "l" || key === "L") {
+          if (moveChoice(1)) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          return;
+        }
+
+        if (key === "Enter") {
+          var active = keyboardChoiceState.elements[keyboardChoiceState.activeIndex];
+          if (active) {
+            active.click();
+            event.preventDefault();
+            event.stopPropagation();
+          }
+        }
+      },
+      true
+    );
+
+    refreshKeyboardChoices();
+    return;
+  }
+
+  var blocker = document.getElementById("device-blocker");
+  if (blocker) {
+    blocker.classList.add("is-visible");
+  }
+});
+
 </script>  
 
 </head>
 
 <body onselectstart="return false" onContextmenu="return false" ontouchmove="event.preventDefault()" >
+
+<div id="device-blocker" aria-live="polite">
+  <p>PCのみに対応しています。ご了承ください。</p>
+</div>
 
 <div id="tyrano_base" class="tyrano_base" style="overflow:hidden" unselectable="on" ondragstart="return false" ></div>
 <div id="vchat_base" class="vchat_base" style="overflow:hidden" unselectable="on" ondragstart="return false" >
