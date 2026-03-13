@@ -34,12 +34,6 @@
     font-size: 20px;
     line-height: 1.6;
   }
-
-  .keyboard-choice-active {
-    background: rgba(255, 230, 150, 0.35);
-    outline: 2px solid #f0d060;
-    border-radius: 6px;
-  }
 </style>
 
 <link href="./tyrano/tyrano.css" rel="stylesheet" type="text/css"/>
@@ -81,6 +75,8 @@ try{
 
 
 <script type="text/javascript" src="./data/system/KeyConfig.js"></script>
+<link href="./data/system/choice_ui.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="./data/system/choice_ui.js"></script>
 
 <script type="text/javascript" src="./tyrano/lang.js" ></script>
 <script type="text/javascript" src="./tyrano/libs.js" ></script>
@@ -125,155 +121,8 @@ function isUnsupportedMobile() {
   return /Android.+Mobile|iPhone|iPod|Windows Phone|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua);
 }
 
-var keyboardChoiceState = {
-  elements: [],
-  activeIndex: 0
-};
-
-function markArrowUsage() {
-  if (window.TYRANO && TYRANO.kag && TYRANO.kag.variable && TYRANO.kag.variable.f) {
-    TYRANO.kag.variable.f.used_arrow = true;
-  }
-}
-
-function getChoiceElements() {
-  var candidates = Array.prototype.slice.call(
-    document.querySelectorAll("#tyrano_base .message_inner span")
-  );
-
-  return candidates.filter(function (el) {
-    if (!el.textContent || !el.textContent.trim()) {
-      return false;
-    }
-
-    if (el.offsetParent === null) {
-      return false;
-    }
-
-    return window.getComputedStyle(el).cursor === "pointer";
-  });
-}
-
-function applyChoiceHighlight() {
-  keyboardChoiceState.elements.forEach(function (el, index) {
-    if (index === keyboardChoiceState.activeIndex) {
-      el.classList.add("keyboard-choice-active");
-    } else {
-      el.classList.remove("keyboard-choice-active");
-    }
-  });
-}
-
-function refreshKeyboardChoices() {
-  var elements = getChoiceElements();
-  var same =
-    elements.length === keyboardChoiceState.elements.length &&
-    elements.every(function (el, index) {
-      return el === keyboardChoiceState.elements[index];
-    });
-
-  if (!same) {
-    keyboardChoiceState.elements = elements;
-    keyboardChoiceState.activeIndex = 0;
-
-    keyboardChoiceState.elements.forEach(function (el, index) {
-      el.addEventListener("mouseenter", function () {
-        keyboardChoiceState.activeIndex = index;
-        applyChoiceHighlight();
-      });
-    });
-  }
-
-  if (keyboardChoiceState.activeIndex >= keyboardChoiceState.elements.length) {
-    keyboardChoiceState.activeIndex = 0;
-  }
-
-  applyChoiceHighlight();
-}
-
-function moveChoice(delta) {
-  if (!keyboardChoiceState.elements.length) {
-    return false;
-  }
-
-  var count = keyboardChoiceState.elements.length;
-  keyboardChoiceState.activeIndex =
-    (keyboardChoiceState.activeIndex + delta + count) % count;
-  applyChoiceHighlight();
-  return true;
-}
-
 document.addEventListener("DOMContentLoaded", function () {
   if (!isUnsupportedMobile()) {
-    var observer = new MutationObserver(function () {
-      refreshKeyboardChoices();
-    });
-
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ["style", "class"]
-    });
-
-    document.addEventListener(
-      "keydown",
-      function (event) {
-        refreshKeyboardChoices();
-
-        if (!keyboardChoiceState.elements.length) {
-          return;
-        }
-
-        var key = event.key;
-
-        if (key === "ArrowUp" || key === "ArrowLeft") {
-          markArrowUsage();
-          if (moveChoice(-1)) {
-            event.preventDefault();
-            event.stopPropagation();
-          }
-          return;
-        }
-
-        if (key === "ArrowDown" || key === "ArrowRight") {
-          markArrowUsage();
-          if (moveChoice(1)) {
-            event.preventDefault();
-            event.stopPropagation();
-          }
-          return;
-        }
-
-        if (key === "k" || key === "K" || key === "h" || key === "H") {
-          if (moveChoice(-1)) {
-            event.preventDefault();
-            event.stopPropagation();
-          }
-          return;
-        }
-
-        if (key === "j" || key === "J" || key === "l" || key === "L") {
-          if (moveChoice(1)) {
-            event.preventDefault();
-            event.stopPropagation();
-          }
-          return;
-        }
-
-        if (key === "Enter") {
-          var active = keyboardChoiceState.elements[keyboardChoiceState.activeIndex];
-          if (active) {
-            active.click();
-            event.preventDefault();
-            event.stopPropagation();
-          }
-        }
-      },
-      true
-    );
-
-    refreshKeyboardChoices();
     return;
   }
 
